@@ -93,8 +93,8 @@ pipeline {
     agent any
     
     parameters {
-        string(name: 'STUDENT_NAME', defaultValue: 'Student', description: 'Имя студента')
-        string(name: 'PORT', defaultValue: '8081', description: 'Порт')
+        string(name: 'STUDENT_NAME', defaultValue: 'Andrey', description: 'Имя студента')
+        string(name: 'PORT', defaultValue: '8055', description: 'Порт')
     }
     
     stages {
@@ -102,21 +102,21 @@ pipeline {
             steps {
                 script {
                     // Останавливаем и удаляем контейнер с нужным именем, если он есть
-                    sh "docker ps -a -q --filter name=hello-student-container | xargs -r docker rm -f"
+                    sh "docker ps -a -q --filter name=hello-surname-container | xargs -r docker rm -f"
                     // Удаляем образ с нужным именем, если он есть
-                    sh "docker images -q student-fio-app | xargs -r docker rmi -f"
+                    sh "docker images -q student-surname-app | xargs -r docker rmi -f"
                 }
             }
         }
         stage('Выгружаем код из репозитория') {
             steps {
-                git 'https://github.com/xDeshka/hellojenkins.git'
+                git 'https://github.com/AndreyPesterev/Lr2DevOps.git'
             }
         }
         stage('Собираем docker image') {
             steps {
                 script {
-                    dockerImage = docker.build("student-fio-app")
+                    dockerImage = docker.build("student-surname-app")
                 }
             }
         }
@@ -132,7 +132,7 @@ pipeline {
         stage('Запускаем докер контейнер') {
             steps {
                 script {
-                    sh "docker run -d --name hello-student-container -p ${params.PORT}:${params.PORT} -e STUDENT_NAME='${params.STUDENT_NAME}' -e PORT=${params.PORT} student-fio-app"
+                    sh "docker run -d --name hello-surname-container -p ${params.PORT}:${params.PORT} -e STUDENT_NAME='${params.STUDENT_NAME}' -e PORT=${params.PORT} student-surname-app"
                 }
             }
         }
@@ -157,7 +157,7 @@ pipeline {
 3. Нажмите кнопку **Add webhook**.
 4. В поле **Payload URL** введите адрес вашего Jenkins вебхука:
    ```
-   http://158.160.194.244:8080/github-webhook/
+   http://158.160.194.244:8080/job/student-Andrey-Pesterev/
    ```
 5. В поле **Content type** выберите `application/json`.
 6. В разделе **Which events would you like to trigger this webhook?** выберите **Just the push event**.
@@ -172,7 +172,7 @@ pipeline {
 3. Мониторьте процесс исполнения через вкладку **Console Output** — убедитесь, что код корректно выкачан, прошли тесты, приложение собрано и запущено.
 4. Откройте приложение в браузере по адресу:
    ```
-   http://84.201.147.67:<ваш_порт>/
+   http://84.201.147.67:8055/
    ```
 
    Должно отображаться приветствие с вашим именем.
